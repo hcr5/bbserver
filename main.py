@@ -1,34 +1,41 @@
-import logging
-import logging.handlers
-import os
+import scratchattach as scratch3
+from scratchattach import Encoding
 
-import requests
+session = scratch3.Session(".eJxVT89PgzAU_l96nkhpu8Jum5cZzRKXmLgTebQPqEC70OKMxv_dNuGy28v3vp-_ZPE4W5iQ7IgZ3ReCNROMXlCyITUsoa8TozY6EmghWFlRyeIvoA_KucEk5c3NA-p7RQNqQJtkCUMbjIJgnM3Wh8_OeB1X8LCSo6-LR8oCharJKWcgOLIGKFKmqGK8UcBzvTsX38_NMB7fTwfeHqfX5ml_-Vjw5a300WZ0nbEP5hqdym1WyoxWNCt4qjiC7RboUu-YtCH6MwKuDmbCH2cTvJ9wjsUeT3irL3Ha_bAefB9JrW6hElIWrJVAuVZVgaqQuZZYMVriVghJJZTk7x9ja3Pc:1rT2ty:FicJaCJBl1llywxXuJfkVpe7L-k", username="iloveanimals51") #replace with your session_id and username
+conn = session.connect_cloud("956295976") #replace with your project id
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger_file_handler = logging.handlers.RotatingFileHandler(
-    "status.log",
-    maxBytes=1024 * 1024,
-    backupCount=1,
-    encoding="utf8",
-)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-logger_file_handler.setFormatter(formatter)
-logger.addHandler(logger_file_handler)
+client = scratch3.CloudRequests(conn)
 
-try:
-    SOME_SECRET = os.environ["SOME_SECRET"]
-except KeyError:
-    SOME_SECRET = "Token not available!"
-    #logger.info("Token not available!")
-    #raise
+@client.request
+def follow(usert): #called when client receives request
+    print(usert)
+    who="hcr5"
+    reciever=usert
+    amount=-10
+    
+    conn = session.connect_cloud("669020072")
+    encwho=Encoding.encode(f"bal&{who}")
+    encto=Encoding.encode(f"give&{reciever}&{amount}")
 
+    user = session.connect_user(usert)
+    user.follow()
 
-if __name__ == "__main__":
-    logger.info(f"Token value: {SOME_SECRET}")
+    print(conn)
+    
+    conn.set_var("Cloud", encwho)
+    conn.set_var("Cloud", encwho)
+    conn.set_var("verification", "0")
+    conn.set_var("Cloud", encto)
+    conn.set_var("Cloud", encwho)
 
-    r = requests.get('https://weather.talkpython.fm/api/weather/?city=Berlin&country=DE')
-    if r.status_code == 200:
-        data = r.json()
-        temperature = data["forecast"]["temp"]
-        logger.info(f'Weather in Berlin: {temperature}')
+    return "recieved"
+
+@client.request
+def check():
+    return "server running"
+    
+@client.event
+def on_ready():
+    print("Request handler is running")
+
+client.run() #make sure this is ALWAYS at the bottom of your Python file
